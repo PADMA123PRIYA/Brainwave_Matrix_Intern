@@ -1,0 +1,123 @@
+# User authentication 
+USERS = {"priya": "1010"}
+inventory = {}
+sales = []
+
+
+def login():
+    print("==== Inventory System Login ====")
+    username = input("Username: ")
+    password = input("Password: ")
+
+    if username in USERS and USERS[username] == password:
+        print("Login successful!\n")
+        return True
+    else:
+        print("Invalid credentials.")
+        return False
+
+
+def add_product():
+    pid = input("Enter product ID: ")
+    name = input("Enter product name: ")
+    qty = int(input("Enter quantity: "))
+    price = float(input("Enter price: "))
+
+    inventory[pid] = {"name": name, "qty": qty, "price": price}
+    print(" Product added.\n")
+
+
+def view_products():
+    print("\n=== Inventory ===")
+    if not inventory:
+        print("No products found.")
+    else:
+        for pid, details in inventory.items():
+            print(f"ID: {pid}, Name: {details['name']}, Qty: {details['qty']}, Price: {details['price']}")
+    print()
+
+
+def update_product():
+    pid = input("Enter product ID to update: ")
+    if pid in inventory:
+        qty = int(input("Enter new quantity: "))
+        price = float(input("Enter new price: "))
+        inventory[pid]["qty"] = qty
+        inventory[pid]["price"] = price
+        print(" Product updated.\n")
+    else:
+        print(" Product not found.\n")
+
+
+def delete_product():
+    pid = input("Enter product ID to delete: ")
+    if pid in inventory:
+        del inventory[pid]
+        print("Product deleted.\n")
+    else:
+        print("Product not found.\n")
+
+
+def record_sale():
+    pid = input("Enter product ID to sell: ")
+    if pid in inventory:
+        qty = int(input("Enter quantity sold: "))
+        if inventory[pid]["qty"] >= qty:
+            inventory[pid]["qty"] -= qty
+            total = qty * inventory[pid]["price"]
+            sales.append({"pid": pid, "qty": qty, "total": total})
+            print(f"Sale recorded! Total = {total}\n")
+        else:
+            print("Not enough stock.\n")
+    else:
+        print("Product not found.\n")
+
+
+def low_stock_alert():
+    print("\n=== Low Stock Alert ===")
+    for pid, details in inventory.items():
+        if details["qty"] <= 5:  # threshold
+            print(f" {details['name']} (ID {pid}) is low on stock: Qty = {details['qty']}")
+    print()
+
+
+def sales_summary():
+    print("\n=== Sales Summary ===")
+    total_revenue = sum(sale["total"] for sale in sales)
+    total_units = sum(sale["qty"] for sale in sales)
+    print(f"Total units sold: {total_units}, Total revenue: {total_revenue}\n")
+
+
+# Main program
+if login():
+    while True:
+        print("1. Add Product")
+        print("2. View Products")
+        print("3. Update Product")
+        print("4. Delete Product")
+        print("5. Record Sale")
+        print("6. Low Stock Alert")
+        print("7. Sales Summary")
+        print("8. Exit")
+
+        choice = input("Enter choice: ")
+
+        if choice == "1":
+            add_product()
+        elif choice == "2":
+            view_products()
+        elif choice == "3":
+            update_product()
+        elif choice == "4":
+            delete_product()
+        elif choice == "5":
+            record_sale()
+        elif choice == "6":
+            low_stock_alert()
+        elif choice == "7":
+            sales_summary()
+        elif choice == "8":
+            print("Exiting... Goodbye!")
+            break
+        else:
+            print(" Invalid choice.\n")
